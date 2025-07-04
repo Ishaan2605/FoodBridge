@@ -19,7 +19,7 @@ SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
-# ---------- ✅ 1. AI-Based User Registration ----------
+# AI-Based User Registration
 class UserRegistration(BaseModel):
     name: str
     email: str
@@ -56,7 +56,7 @@ Only respond with one word: green, yellow, or red.
         if trust_level not in ["green", "yellow", "red"]:
             trust_level = "yellow"
     except Exception as e:
-        print("⚠️ Gemini Error:", str(e))
+        print("Gemini Error:", str(e))
         trust_level = "yellow"
 
     try:
@@ -74,7 +74,7 @@ Only respond with one word: green, yellow, or red.
         )
 
         if auth_res.status_code != 200:
-            print("⚠️ Supabase Auth Error:", auth_res.text)
+            print("Supabase Auth Error:", auth_res.text)
             raise HTTPException(status_code=500, detail="Supabase Auth registration failed")
 
         user_id = auth_res.json().get("id")
@@ -109,19 +109,19 @@ Only respond with one word: green, yellow, or red.
         )
 
         if insert_res.status_code != 201:
-            print("⚠️ Supabase Insert Error:", insert_res.text)
+            print("Supabase Insert Error:", insert_res.text)
             raise HTTPException(status_code=500, detail="User metadata insert failed")
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Metadata insert error: {str(e)}")
 
     return {
-        "message": "✅ Registered and verified",
+        "message": "Registered and verified",
         "trust_level": trust_level,
         "user_id": user_id
     }
 
-# ---------- ✅ 2. Custom Request Submission ----------
+ #2. Custom Request Submission 
 class CustomRequest(BaseModel):
     reciever_id: str
     quantity: str
@@ -150,11 +150,11 @@ async def submit_custom_request(payload: CustomRequest):
         )
 
         if res.status_code != 201:
-            print("❌ Supabase Insert Error:", res.text)
+            print("Supabase Insert Error:", res.text)
             raise HTTPException(status_code=500, detail="Request submission failed")
 
-        return {"message": "✅ Custom request submitted successfully!"}
+        return {"message": "Custom request submitted successfully!"}
     
     except Exception as e:
-        print("🔥 Error:", str(e))
+        print("Error:", str(e))
         raise HTTPException(status_code=500, detail="Something went wrong")

@@ -32,9 +32,9 @@ async def submit_custom_request(payload: CustomRequest):
         )
 
         if response.status_code != 201:
-            print("❌ Supabase insert error:", response.text)
+            print("Supabase insert error:", response.text)
             raise HTTPException(status_code=400, detail="Request submission failed")
 
-        return {"message": "✅ Request submitted successfully!"}
+        return {"message": "Request submitted successfully!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
