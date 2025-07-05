@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { supabase } from '../../utils/supabaseClient';     
+import { supabase } from '../../utils/supabaseClient';
 
 export default function Signup() {
   const [form, setForm] = useState({
@@ -15,6 +15,7 @@ export default function Signup() {
     doc_url: '',
     contact_info: '',
   });
+
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -24,17 +25,17 @@ export default function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     setErrorMsg('');
-    setLoading(true); // Start loading
+    setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8000/register_user_with_ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('http://localhost:8000/register_user_with_ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
 
       const result = await response.json();
-      setLoading(false); // Stop loading
+      setLoading(false);
 
       if (!response.ok) {
         throw new Error(result.detail || 'Registration failed');
@@ -43,32 +44,32 @@ export default function Signup() {
       router.push('/auth/Login');
     } catch (error) {
       setLoading(false);
-      setErrorMsg(error.message || "Something went wrong");
+      setErrorMsg(error.message || 'Something went wrong');
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-100 to-orange-200 px-4 animate-fade-in">
       <div className="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-md border-t-[6px] border-orange-400">
-        <h1 className="text-4xl font-bold text-center text-orange-600 mb-6"> Create Account</h1>
+        <h1 className="text-4xl font-bold text-center text-orange-600 mb-6">Create Account</h1>
 
         {errorMsg && <p className="text-red-500 text-center mb-4">{errorMsg}</p>}
-        {loading && <p className="text-orange-500 text-center mb-4 font-medium">Please wait, verifying your organization…</p>}
+        {loading && <p className="text-orange-500 text-center mb-4 font-medium">Verifying your organization…</p>}
 
         <form onSubmit={handleSignup} className="space-y-4">
           <input name="name" value={form.name} onChange={handleChange} placeholder="Full Name" className="input-style" required />
           <input name="email" value={form.email} onChange={handleChange} placeholder="Email Address" className="input-style" required />
-          <input name="password" value={form.password} onChange={handleChange} placeholder="Password" className="input-style" type="password" required />
+          <input name="password" type="password" value={form.password} onChange={handleChange} placeholder="Password" className="input-style" required />
           <select name="role" value={form.role} onChange={handleChange} className="input-style text-gray-700">
             <option value="donor">Donor</option>
             <option value="receiver">Receiver</option>
           </select>
-          <input name="contact_info" value={form.contact_info || ''} onChange={handleChange} placeholder="Contact Number" className="input-style" required />
+          <input name="contact_info" value={form.contact_info} onChange={handleChange} placeholder="Contact Number" className="input-style" required />
           <input name="org_name" value={form.org_name} onChange={handleChange} placeholder="Organization Name" className="input-style" required />
-          <input name="org_type" value={form.org_type} onChange={handleChange} placeholder="Organization Type (e.g., NGO, Restaurant)" className="input-style" required />
-          <input name="location" value={form.location} onChange={handleChange} placeholder="Location (City, Area)" className="input-style" required />
-          <input name="description" value={form.description} onChange={handleChange} placeholder="Short Description" className="input-style" required />
-          <input name="doc_url" value={form.doc_url} onChange={handleChange} placeholder="Document URL (for verification)" className="input-style" required />
+          <input name="org_type" value={form.org_type} onChange={handleChange} placeholder="Organization Type" className="input-style" required />
+          <input name="location" value={form.location} onChange={handleChange} placeholder="Location" className="input-style" required />
+          <input name="description" value={form.description} onChange={handleChange} placeholder="Description" className="input-style" required />
+          <input name="doc_url" value={form.doc_url} onChange={handleChange} placeholder="Document URL" className="input-style" required />
 
           <button type="submit" className="btn-primary w-full" disabled={loading}>🚀 Sign Up</button>
         </form>
@@ -92,13 +93,12 @@ export default function Signup() {
 
         .input-style::placeholder {
           color: #6b7280;
-          opacity: 1;
         }
 
         .input-style:focus {
           border-color: #f97316;
-          outline: none;
           background-color: white;
+          outline: none;
         }
 
         .btn-primary {

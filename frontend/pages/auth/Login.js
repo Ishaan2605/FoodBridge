@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../utils/supabaseClient';
 
@@ -28,10 +28,23 @@ export default function Login() {
     router.push(userData.role === 'donor' ? '/donor/DonorDashboard' : '/receiver/ReceiverDashboard');
   };
 
-  const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-    if (error) setErrorMsg(error.message);
-  };
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: userData, error } = await supabase
+          .from('Users')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (!error && userData) {
+          router.push(userData.role === 'donor' ? '/donor/DonorDashboard' : '/receiver/ReceiverDashboard');
+        }
+      }
+    };
+    checkUser();
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-yellow-100 to-orange-200 px-4 animate-fade-in">
@@ -48,37 +61,28 @@ export default function Login() {
         <p className="text-sm text-gray-600 text-center mt-4">
           Don’t have an account? <a href="/auth/Signup" className="text-orange-600 font-semibold hover:underline">Sign Up</a>
         </p>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm mb-2 text-gray-500">Or continue with</p>
-          <button type="button" onClick={handleGoogleLogin} className="btn-secondary flex items-center justify-center gap-3">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-            <span className="text-sm font-medium text-gray-600">Google</span>
-          </button>
-        </div>
       </form>
 
       <style jsx>{`
         .input-style {
-  width: 100%;
-  padding: 12px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 10px;
-  background-color: #f9fafb;
-  font-size: 14px;
-  color: #1f2937; /* ✅ text-gray-800 */
-}
+          width: 100%;
+          padding: 12px;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 10px;
+          background-color: #f9fafb;
+          font-size: 14px;
+          color: #1f2937;
+        }
 
-.input-style::placeholder {
-  color: #6b7280; /* ✅ text-gray-500 */
-  opacity: 1;
-}
+        .input-style::placeholder {
+          color: #6b7280;
+        }
 
-.input-style:focus {
-  border-color: #f97316;
-  outline: none;
-  background-color: white;
-}
+        .input-style:focus {
+          border-color: #f97316;
+          outline: none;
+          background-color: white;
+        }
 
         .btn-primary {
           padding: 12px;
@@ -92,19 +96,6 @@ export default function Login() {
         .btn-primary:hover {
           background-color: #ea580c;
           transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-          width: 100%;
-          border: 1px solid #e5e7eb;
-          padding: 10px;
-          border-radius: 10px;
-          background-color: #fff;
-          transition: 0.3s ease;
-        }
-
-        .btn-secondary:hover {
-          background-color: #f9fafb;
         }
 
         .animate-fade-in {
